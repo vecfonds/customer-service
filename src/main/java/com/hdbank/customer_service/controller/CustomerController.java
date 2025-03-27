@@ -38,7 +38,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable UUID id, @RequestBody CustomerRequest request) {
-        return ResponseEntity.ok(customerService.updateCustomer(id, request));
+        return ResponseEntity.ok(new BaseResponse<>(customerService.updateCustomer(id, request)));
     }
 
     @DeleteMapping("/{id}")
