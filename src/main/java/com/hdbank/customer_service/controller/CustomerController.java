@@ -33,7 +33,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable UUID id) {
-        return ResponseEntity.ok(customerService.getCustomerById(id));
+        return ResponseEntity.ok(new BaseResponse<>(customerService.getCustomerById(id)));
     }
 
     @PutMapping("/{id}")
