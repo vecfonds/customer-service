@@ -26,7 +26,7 @@ public class Customer {
 
 //    @NotBlank(message = "Email không được để trống")
 //    @Email(message = "Email không hợp lệ")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
 //    @NotBlank(message = "Số điện thoại không được để trống")
