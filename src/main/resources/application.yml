@@ -21,6 +21,14 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect  # Cần thêm dòng này
+      hibernate.format_sql: true  # Để dễ dàng đọc SQL trong log
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 #    properties:
 #      hibernate:
 #        '[default_schema]': ${PG_SCHEMA:customer-service}
