@@ -11,5 +11,5 @@ public interface AccountService {
     List<AccountResponse> getAccountsByCustomerId(UUID customerId);
     AccountResponse getAccountById(UUID id);
     AccountResponse updateAccount(UUID id, AccountRequest request);
-    void deleteAccount(UUID id);
+    String deleteAccount(UUID id);
 }

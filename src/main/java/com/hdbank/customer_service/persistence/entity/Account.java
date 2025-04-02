@@ -1,5 +1,6 @@
 package com.hdbank.customer_service.persistence.entity;
 
+import com.hdbank.customer_service.shared.enumeration.AccountTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,8 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    private AccountTypeEnum accountType;
 
     @Column(nullable = false)
     private String currencyCode;
