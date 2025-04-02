@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:postgresql://127.0.0.1:5432/customer-service
     username: postgres
-    password: postgres
+    password: u1
 
     driver-class-name: org.postgresql.Driver
     hikari:
