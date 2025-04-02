@@ -4,6 +4,7 @@ import com.hdbank.customer_service.dto.request.CustomerRequest;
 import com.hdbank.customer_service.dto.response.CustomerResponse;
 import com.hdbank.customer_service.persistence.entity.Customer;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {

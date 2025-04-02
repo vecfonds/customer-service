@@ -1,10 +1,14 @@
 package com.hdbank.customer_service.persistence.entity;
 
+import com.hdbank.customer_service.shared.enumeration.GenderEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,21 +24,24 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-//    @NotBlank(message = "Tên không được để trống")
-    @Column(nullable = false)
     private String name;
 
-//    @NotBlank(message = "Email không được để trống")
-//    @Email(message = "Email không hợp lệ")
-    @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
+
+    @Column(unique = true, nullable = false)
+    private String cccd;
+
     private String email;
 
-//    @NotBlank(message = "Số điện thoại không được để trống")
-//    @Pattern(regexp = "^\\d{10}$", message = "Số điện thoại không hợp lệ")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = true)
+    private String address;
+
     private String phone;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Account> accounts = new ArrayList<>();
+    private List<Account> accounts;
 }
 

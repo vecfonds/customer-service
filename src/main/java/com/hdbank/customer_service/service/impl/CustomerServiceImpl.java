@@ -24,13 +24,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponse createCustomer(CustomerRequest request) {
-        try {
-            Customer customer = customerMapper.toEntity(request);
-            return customerMapper.toResponse(customerRepository.save(customer));
+        if (customerRepository.findByCccd(request.getCccd()).isPresent()) {
+            throw new BadRequestException("CCCD number is already in use!", ResponseEnum.OBJECT_EXISTS);
         }
-        catch (Exception e){
-            throw new BadRequestException(e.getMessage(), ResponseEnum.OBJECT_EXISTS);
-        }
+        Customer customer = customerMapper.toEntity(request);
+        return customerMapper.toResponse(customerRepository.save(customer));
     }
 
     @Override
@@ -45,13 +43,13 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse getCustomerById(UUID id) {
         return customerRepository.findById(id)
                 .map(customerMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found", ResponseEnum.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found!", ResponseEnum.RESOURCE_NOT_FOUND));
     }
 
     @Override
     public CustomerResponse updateCustomer(UUID id, CustomerRequest request) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found", ResponseEnum.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found!", ResponseEnum.RESOURCE_NOT_FOUND));
 
         customer.setName(request.getName());
         customer.setEmail(request.getEmail());
@@ -60,7 +58,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomer(UUID id) {
+    public String deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
+        return "Customer deleted successfully!";
     }
 }
