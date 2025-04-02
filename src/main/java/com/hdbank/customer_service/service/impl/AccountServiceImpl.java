@@ -7,6 +7,7 @@ import com.hdbank.customer_service.persistence.entity.Customer;
 import com.hdbank.customer_service.persistence.repository.AccountRepository;
 import com.hdbank.customer_service.persistence.repository.CustomerRepository;
 import com.hdbank.customer_service.service.AccountService;
+import com.hdbank.customer_service.shared.exception.ResourceNotFoundException;
 import com.hdbank.customer_service.shared.mapper.AccountMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponse createAccount(AccountRequest request) {
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found!"));
 
         Account account = accountMapper.toEntity(request);
         account.setCustomer(customer);
@@ -44,13 +45,13 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse getAccountById(UUID id) {
         return accountRepository.findById(id)
                 .map(accountMapper::toResponse)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
     }
 
     @Override
     public AccountResponse updateAccount(UUID id, AccountRequest request) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
         account.setCurrencyCode(request.getCurrencyCode());
         account.setBalance(request.getBalance());
@@ -59,7 +60,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(UUID id) {
+    public String deleteAccount(UUID id) {
         accountRepository.deleteById(id);
+        return "Account deleted successfully!";
     }
 }
