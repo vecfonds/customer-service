@@ -7,6 +7,7 @@ import com.hdbank.customer_service.persistence.entity.Customer;
 import com.hdbank.customer_service.persistence.repository.AccountRepository;
 import com.hdbank.customer_service.persistence.repository.CustomerRepository;
 import com.hdbank.customer_service.service.AccountService;
+import com.hdbank.customer_service.shared.enumeration.ResponseEnum;
 import com.hdbank.customer_service.shared.exception.ResourceNotFoundException;
 import com.hdbank.customer_service.shared.mapper.AccountMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponse createAccount(AccountRequest request) {
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found!", ResponseEnum.RESOURCE_NOT_FOUND));
 
         Account account = accountMapper.toEntity(request);
         account.setCustomer(customer);
@@ -38,20 +39,20 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByCustomerId(customerId)
                 .stream()
                 .map(accountMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public AccountResponse getAccountById(UUID id) {
         return accountRepository.findById(id)
                 .map(accountMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found", ResponseEnum.RESOURCE_NOT_FOUND));
     }
 
     @Override
     public AccountResponse updateAccount(UUID id, AccountRequest request) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found", ResponseEnum.RESOURCE_NOT_FOUND));
 
         account.setCurrencyCode(request.getCurrencyCode());
         account.setBalance(request.getBalance());
@@ -60,8 +61,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String deleteAccount(UUID id) {
+    public void deleteAccount(UUID id) {
+        if (!accountRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Account does not exist.", ResponseEnum.RESOURCE_NOT_FOUND);
+        }
+
         accountRepository.deleteById(id);
-        return "Account deleted successfully!";
     }
 }

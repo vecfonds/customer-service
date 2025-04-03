@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 //    private static final String COMMON_ERROR_MESSAGE_TEMPLATE = "Got error: [%s], with Message: [%s]";
-
+//
 //    private String buildErrorMessage(Exception ex) {
 //        return String.format(COMMON_ERROR_MESSAGE_TEMPLATE, ex.getClass().getName(), ex.getMessage());
 //    }
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         var response = BaseResponse.of();
         response.setResponseCode(errorInfo.getResponseCode());
         response.setMessage(errorInfo.getMessage());
-        response.setData(errorData);
+        response.setDescription(errorData);
         return response;
     }
 
