@@ -12,6 +12,7 @@ import java.time.Instant;
 public class BaseResponse<T> {
     private String responseCode = "0000";
     private String message = "Success";
+    private String description = "";
     private String timestamp = Instant.now().toString();
     private T data;
 
@@ -23,6 +24,7 @@ public class BaseResponse<T> {
         BaseResponse<O> res = new BaseResponse<>();
         res.setMessage(responseEnum.getMessage());
         res.setResponseCode(responseEnum.getResponseCode());
+        res.setDescription(responseEnum.getDescription());
         return res;
     }
 

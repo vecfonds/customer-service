@@ -37,7 +37,8 @@ public class AccountController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable UUID id) {
-        return ResponseEntity.ok(new BaseResponse<>(accountService.deleteAccount(id)));
+        accountService.deleteAccount(id);
+        return ResponseEntity.ok(new BaseResponse<>());
     }
 }
 

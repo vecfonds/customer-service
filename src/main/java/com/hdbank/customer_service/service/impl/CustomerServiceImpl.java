@@ -9,12 +9,12 @@ import com.hdbank.customer_service.shared.enumeration.ResponseEnum;
 import com.hdbank.customer_service.shared.exception.BadRequestException;
 import com.hdbank.customer_service.shared.exception.ResourceNotFoundException;
 import com.hdbank.customer_service.shared.mapper.CustomerMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse createCustomer(CustomerRequest request) {
         if (customerRepository.findByCccd(request.getCccd()).isPresent()) {
-            throw new BadRequestException("CCCD number is already in use!", ResponseEnum.OBJECT_EXISTS);
+            throw new BadRequestException("CCCD number is already in use!", ResponseEnum.RESOURCE_ALREADY_EXISTS);
         }
         Customer customer = customerMapper.toEntity(request);
         return customerMapper.toResponse(customerRepository.save(customer));
@@ -36,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll()
                 .stream()
                 .map(customerMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -58,8 +58,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public String deleteCustomer(UUID id) {
+    public void deleteCustomer(UUID id) {
+        if (!customerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Customer does not exist.", ResponseEnum.RESOURCE_NOT_FOUND);
+        }
+
         customerRepository.deleteById(id);
-        return "Customer deleted successfully!";
     }
 }
