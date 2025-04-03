@@ -2,7 +2,6 @@ package com.hdbank.customer_service.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 import java.util.UUID;

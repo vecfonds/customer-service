@@ -7,10 +7,13 @@ import com.hdbank.customer_service.persistence.repository.AccountRepository;
 import com.hdbank.customer_service.persistence.repository.TransactionRepository;
 import com.hdbank.customer_service.service.TransactionService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Component
 public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
