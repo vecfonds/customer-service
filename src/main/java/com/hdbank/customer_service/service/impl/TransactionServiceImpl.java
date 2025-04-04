@@ -5,10 +5,12 @@ import com.hdbank.customer_service.persistence.entity.Account;
 import com.hdbank.customer_service.persistence.entity.Transaction;
 import com.hdbank.customer_service.persistence.repository.AccountRepository;
 import com.hdbank.customer_service.persistence.repository.TransactionRepository;
+import com.hdbank.customer_service.service.ExchangeRateService;
 import com.hdbank.customer_service.service.TransactionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,10 +19,14 @@ import java.util.UUID;
 public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final ExchangeRateService exchangeRateService;
 
-    public TransactionServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public TransactionServiceImpl(AccountRepository accountRepository,
+                                  TransactionRepository transactionRepository,
+                                  ExchangeRateService exchangeRateService) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.exchangeRateService = exchangeRateService;
     }
 
     @Override
@@ -37,19 +43,24 @@ public class TransactionServiceImpl implements TransactionService {
         Account toAccount = accountRepository.findById(toAccountId)
                 .orElseThrow(() -> new RuntimeException("Tài khoản nhận không tồn tại"));
 
-        // Kiểm tra loại tiền tệ có khớp nhau không
-        // if (!fromAccount.getCurrencyCode().equals(toAccount.getCurrencyCode())) {
-        //     throw new CurrencyMismatchException("Không thể chuyển tiền giữa các tài khoản với loại tiền tệ khác nhau");
-        //  }
+        BigDecimal exchangeRate = BigDecimal.ONE;
+
+        // Nếu khác loại tiền tệ thì quy đổi
+        if (!fromAccount.getCurrencyCode().equals(toAccount.getCurrencyCode())) {
+           exchangeRate = exchangeRateService.getRate(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
+        }
 
 
+        // Kiểm tra số dư
         if (fromAccount.getBalance().compareTo(amount) < 0) {
             throw new RuntimeException("Số dư không đủ để thực hiện giao dịch.");
         }
 
         // Trừ tiền từ tài khoản gửi
         fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
+        BigDecimal convertedAmount = amount.multiply(exchangeRate);
         BigDecimal oldBalance = toAccount.getBalance();
+        toAccount.setBalance(oldBalance.add(convertedAmount));
 
         // Cộng tiền vô tài khoản nhận
         toAccount.setBalance(toAccount.getBalance().add(amount));
