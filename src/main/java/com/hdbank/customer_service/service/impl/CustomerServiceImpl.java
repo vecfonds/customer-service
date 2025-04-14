@@ -1,5 +1,6 @@
 package com.hdbank.customer_service.service.impl;
 
+import com.hdbank.customer_service.dto.enums.CustomerLogType;
 import com.hdbank.customer_service.dto.request.CustomerRequest;
 import com.hdbank.customer_service.dto.response.CustomerResponse;
 import com.hdbank.customer_service.persistence.entity.Customer;
@@ -9,8 +10,10 @@ import com.hdbank.customer_service.shared.enumeration.ResponseEnum;
 import com.hdbank.customer_service.shared.exception.BadRequestException;
 import com.hdbank.customer_service.shared.exception.ResourceNotFoundException;
 import com.hdbank.customer_service.shared.mapper.CustomerMapper;
+import com.hdbank.customer_service.utils.LogUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
@@ -51,7 +55,15 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found!", ResponseEnum.RESOURCE_NOT_FOUND));
 
+        final CustomerLogType type = CustomerLogType.CUSTOMER;
+        LogUtil.logFetching(log, type.getValue(), "Customer old information: " + customer);
+
         customer.setName(request.getName());
+        customer.setPhone(request.getPhone());
+        customer.setDateOfBirth(request.getDateOfBirth());
+        customer.setGender(request.getGender());
+        customer.setCccd(request.getCccd());
+        customer.setAddress(request.getAddress());
         customer.setEmail(request.getEmail());
 
         return customerMapper.toResponse(customerRepository.save(customer));

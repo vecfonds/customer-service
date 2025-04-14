@@ -1,10 +1,13 @@
 server:
   port: ${PORT:8080}
+  address: 0.0.0.0
   ssl:
     enabled: false
   servlet:
     context-path: ${SERVER_CONTEXT_PATH:/customer-service}
 spring:
+  logging:
+    config: classpath:logback-spring.xml
   application:
     name: ${APPLICATION_NAME:customer-service}
   datasource:
@@ -35,11 +38,10 @@ spring:
 spring-doc:
   api-docs:
     enabled: true
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
 
-
-
-#logging:
-#  level:
-#    root: debug
+logging:
+  level:
+    root: debug
