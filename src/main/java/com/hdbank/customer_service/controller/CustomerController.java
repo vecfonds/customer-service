@@ -2,7 +2,10 @@ package com.hdbank.customer_service.controller;
 
 import com.hdbank.customer_service.dto.request.CustomerRequest;
 import com.hdbank.customer_service.dto.response.BaseResponse;
+import com.hdbank.customer_service.dto.response.CustomerResponse;
 import com.hdbank.customer_service.service.CustomerService;
+import com.hdbank.customer_service.utils.LogUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +18,13 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<?> createCustomer(@RequestBody CustomerRequest request) {
-        return ResponseEntity.ok(new BaseResponse<>(customerService.createCustomer(request)));
+    private final LogUtil logUtil;
 
+    @PostMapping
+    public ResponseEntity<?> createCustomer(@RequestBody CustomerRequest request, HttpServletRequest http) {
+        CustomerResponse response = customerService.createCustomer(request);
+        logUtil.logHelper(http, request, response);
+        return ResponseEntity.ok(new BaseResponse<>(response));
     }
 
     @GetMapping
